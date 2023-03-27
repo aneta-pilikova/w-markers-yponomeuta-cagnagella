@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -l select=1:ncpus=17:mem=100gb:scratch_local=250gb
+#PBS -l walltime=48:00:00
+#PBS -N Ycag-Flye-assembly-2-Quast
+
+trap'clean_scratch'TERM EXIT
+
+DATADIR="/path/to/assembly_file/"
+
+cp $DATADIR/assembly.fasta $SCRATCHDIR || exit 1
+cd $SCRATCHDIR || exit 2
+
+module add quast-4.6.3
+
+quast.py --min-contig 500 -o quast_10000_Ycag.out -t 16 assembly.fasta
+
+rm $SCRATCHDIR/.fasta
+
+cp -r $SCRATCHDIR/* /path/to/Quast-Output/ ||exportCLEAN_SCRATCH=false
